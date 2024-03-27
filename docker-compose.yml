@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  grafana:
+    build:
+      context: ./grafana
+    container_name: grafana
+    ports:
+      - 9000:8124
+    volumes:
+      - grafana-app-data:/var/lib/grafana
+
+volumes:
+  grafana-app-data:
+    # Configs directly app data storage over external storage
+    external: true
