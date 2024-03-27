@@ -1,15 +1,54 @@
 version: "3.8"
 services:
   grafana:
-    build:
-      context: ./grafana
+    image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - 9000:8124
+      - "3000:3000"
+    environment:
+      - GH_SECURITY_ADMIN_PASSWORD=@Dmin
     volumes:
-      - grafana-app-data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
+      # Mounts `grafana.ini` custom grafana configurations as *READ-ONLY*
+      - ./grafana.ini:/etc/grafana/grafana.ini:ro
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command: 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus:/etc/prometheus/
+    depends_on:
+      - grafana
+
+  # Exporter drivers of Prometheus metrics
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - "--path.rootfs=/host"
+    pid: host
+    restart: unless-stopped
+    volumes: 
+      - "/:/host:ro,rslave"
+  
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
 
 volumes:
-  grafana-app-data:
-    # Configs directly app data storage over external storage
-    external: true
+  grafana_data:
+  prometheus_data:

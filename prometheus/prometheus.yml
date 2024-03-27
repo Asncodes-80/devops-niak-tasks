@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      # Based on answer at following issue
+      # https://github.com/grafana/grafana/issues/46434#issuecomment-1598908205 
+      - targets: ['prometheus:9090']
+  
+  # We can add another exporters in following like `node_exporter` and
+  # `cadvisor`, See them in `Targets`
+  - job_name: "node_exporter"
+    static_configs:
+      - targets: ["node_exporter:9100"]
+
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]
