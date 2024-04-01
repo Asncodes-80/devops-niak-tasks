@@ -1,0 +1,28 @@
+version: "3.6"
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:16.8.5-ce.0
+    container_name: gitlab
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "22:22"
+    volumes:
+      - "$GITLAB_HOME/config:/etc/gitlab"
+      - "$GITLAB_HOME/data:/var/opt/gitlab"
+      - "$GITLAB_HOME/logs:/var/log/gitlab"
+    # Default GitLab Shared Memory
+    shm_size: "256m"
+  gitlab_runner:
+    image: gitlab/gitlab-runner
+    container_name: gitlab-runner
+    restart: always
+    volumes:
+      - "$GITLAB_RUNNER/config:/etc/gitlab-runner"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+  gitlab_docs:
+    image: registry.gitlab.com/gitlab-org/gitlab-docs:latest
+    container_name: gitlab_ce_docs
+    ports:
+      - "8192:4000"
