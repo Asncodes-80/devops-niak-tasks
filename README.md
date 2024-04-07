@@ -12,7 +12,11 @@ docker-compose up # -d
 
 Sample runner configuration `config.toml` at `/etc/gitlab-runner/`:
 
-+ Install `gitlab-runner` locally or using docker image of that.
++ Install `gitlab-runner` locally or using docker image of that
+  + In case of docker image: `docker exec -it gitlab-runner bash`
+  + Enter new token and host name that you got them from GitLab runner page (IP
+    network address or you can ignore it by `network_mode: host`) at
+    `docker-compose`
 + Copy this config and paste it into `/etc/gitlab-runner/config.toml`
 + Check token and url from following config and your GitLab runner configuration
   (Through the UI)
